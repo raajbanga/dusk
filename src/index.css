@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/* Fluent (Windows 11) tokens. The window itself is Acrylic (DWM); we only add the tint layer. */
+:root {
+  color-scheme: light dark;
+  --accent: #005fb8; /* replaced at runtime with the Windows accent (Dark1) */
+  --hover: rgb(0 0 0 / 0.04);
+  --press: rgb(0 0 0 / 0.02);
+  --tint: rgb(243 243 243 / 0.6);
+  --stroke: rgb(0 0 0 / 0.08);
+  --text: rgb(0 0 0 / 0.9);
+  --track: rgb(0 0 0 / 0.18);
+  --thumb-ring: #ffffff;
+  --thumb-border: rgb(0 0 0 / 0.1);
+  --tip-bg: #f9f9f9;
+  --tip-stroke: rgb(0 0 0 / 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --accent: #60cdff; /* replaced at runtime with the Windows accent (Light2) */
+    --hover: rgb(255 255 255 / 0.06);
+    --press: rgb(255 255 255 / 0.04);
+    --tint: rgb(32 32 32 / 0.55);
+    --stroke: rgb(255 255 255 / 0.08);
+    --text: #ffffff;
+    --track: rgb(255 255 255 / 0.2);
+    --thumb-ring: #454545;
+    --thumb-border: rgb(255 255 255 / 0.09);
+    --tip-bg: #2c2c2c;
+    --tip-stroke: rgb(255 255 255 / 0.08);
+  }
+}
+
+@theme inline {
+  --font-sans: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  --color-accent: var(--accent);
+  --color-hover: var(--hover);
+  --color-press: var(--press);
+  --color-tint: var(--tint);
+  --color-stroke: var(--stroke);
+  --color-text: var(--text);
+  --color-track: var(--track);
+  --color-thumb-ring: var(--thumb-ring);
+  --color-thumb-border: var(--thumb-border);
+  --color-tip: var(--tip-bg);
+  --color-tip-stroke: var(--tip-stroke);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+  cursor: default;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fluent slider (see Slider.tsx). The thumb's accent dot is a radial gradient whose radius
+   is a registered property, so it can animate: 6px at rest, 7px on hover, 5px while pressed. */
+@property --dot {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 6px;
+}
+
+.slider {
+  display: block;
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  appearance: none;
+  background: none;
+  outline: none;
+  touch-action: none;
+}
+
+.slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background:
+    linear-gradient(var(--accent), var(--accent)) 0 / var(--v) 100% no-repeat,
+    var(--track);
+}
+
+.slider::-webkit-slider-thumb {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  margin-top: -8px;
+  appearance: none;
+  border: 1px solid var(--thumb-border);
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    var(--accent) calc(var(--dot) - 0.5px),
+    var(--thumb-ring) calc(var(--dot) + 0.5px)
+  );
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.15);
+  transition: --dot 150ms ease-out;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  --dot: 7px;
+}
+
+.slider:active::-webkit-slider-thumb {
+  --dot: 5px;
+}
+
+.slider:focus-visible::-webkit-slider-thumb {
+  box-shadow:
+    0 0 0 3px var(--text),
+    0 1px 2px rgb(0 0 0 / 0.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
