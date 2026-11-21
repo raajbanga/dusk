@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+/* Fluent (Windows 11) tokens, each light-dark(light, dark).
+   The window is DWM's flyout acrylic, which follows the theme, transparency and Energy saver
+   settings by itself but is thinner than the material Quick Settings uses; --color-tint thickens
+   it. Each tint started from captures over black and over white matched to the button area of
+   Quick Settings (not its thicker footer), then was made slightly more see-through by eye. */
+:root {
+  color-scheme: light dark;
+}
+
+@theme {
+  --font-sans: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  /* The Windows accent shades, set at runtime: Dark1 on light backgrounds, Light2 on dark. */
+  --color-accent: light-dark(var(--accent-dark, #005fb8), var(--accent-light, #60cdff));
+  --color-tint: light-dark(rgb(255 255 255 / 0.7), rgb(31 31 31 / 0.8));
+  --color-text: light-dark(rgb(0 0 0 / 0.9), #fff);
+  --color-hover: light-dark(rgb(0 0 0 / 0.04), rgb(255 255 255 / 0.06));
+  --color-press: light-dark(rgb(0 0 0 / 0.02), rgb(255 255 255 / 0.04));
+  /* ControlStrongFillColorDefault, as on the Quick Settings volume slider. */
+  --color-track: light-dark(rgb(0 0 0 / 0.4458), rgb(255 255 255 / 0.5442));
+  --color-thumb-ring: light-dark(#fff, #454545);
+  --color-thumb-border: light-dark(rgb(0 0 0 / 0.1), rgb(255 255 255 / 0.09));
+  --color-tip: light-dark(#f9f9f9, #2c2c2c);
+  --color-tip-stroke: light-dark(rgb(0 0 0 / 0.06), rgb(255 255 255 / 0.08));
+}
+
+/* Transparency effects off: DWM draws a solid fallback; make the panel the solid acrylic fallback colour. */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --color-tint: light-dark(#f9f9f9, #2c2c2c);
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+  cursor: default;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fluent slider (see Row in main.tsx). The thumb's accent dot is a radial gradient whose radius
+   is a registered property, so it can animate: 6px at rest, 7px on hover, 5px while pressed. */
+@property --dot {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 6px;
+}
+
+.slider {
+  display: block;
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  appearance: none;
+  background: none;
+  outline: none;
+  touch-action: none;
+}
+
+.slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background:
+    linear-gradient(var(--color-accent), var(--color-accent)) 0 / var(--v) 100% no-repeat,
+    var(--color-track);
+}
+
+.slider::-webkit-slider-thumb {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  margin-top: -8px;
+  appearance: none;
+  border: 1px solid var(--color-thumb-border);
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    var(--color-accent) calc(var(--dot) - 0.5px),
+    var(--color-thumb-ring) calc(var(--dot) + 0.5px)
+  );
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.15);
+  transition: --dot 150ms ease-out;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  --dot: 7px;
+}
+
+.slider:active::-webkit-slider-thumb {
+  --dot: 5px;
+}
+
+.slider:focus-visible::-webkit-slider-thumb {
+  box-shadow:
+    0 0 0 3px var(--color-text),
+    0 1px 2px rgb(0 0 0 / 0.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

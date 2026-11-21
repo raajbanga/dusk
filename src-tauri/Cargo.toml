@@ -1,0 +1,23 @@
+[package]
+name = "dusk"
+version = "0.1.1"
+description = "Night Light and HDR brightness sliders in the Windows 11 system tray"
+authors = ["Raaj"]
+license = "MIT"
+edition = "2024"
+publish = false
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "image-png"] }
+serde = { version = "1", features = ["derive"] }
+
+# https://v2.tauri.app/concept/size/
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true
